@@ -120,7 +120,6 @@ void parse_commands(int argc, char *argv[]) {
             }
             i++;
         } else if (strcmp(argv[i], WRITE_KEYFILE_FLAG) == 0) {
-            printf("Write keyfile specified\n");
             should_write_keyfile = true;
             i++;
         } else {
@@ -130,13 +129,18 @@ void parse_commands(int argc, char *argv[]) {
     if (input == NULL) {
         printf("Input not specified\n");
         return;
-    } else if (output == NULL) {
-        printf("Output not specified\n");
-        return;
+    }
+    if (output == NULL) {
+        char output_buf[2048] = "output_";
+        strcat(output_buf, input);
+        output = strdup(output_buf);
+        printf("Output not specified. Defaulted to %s\n" ,output);
     }
     chacha20_encrypt(key, 1, nonce, input, output);
     if (should_write_keyfile) {
+        printf("Writing keyfile to %s\n", "keyfile");
         write_keyfile("keyfile", key, nonce);
+        printf("Done\n");
     }
 }
 
