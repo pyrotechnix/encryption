@@ -148,7 +148,11 @@ void chacha20_encrypt(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char
         printf("Block %d\n", i);
         // Init and process the state
         uint32_t state[4][4];
+        init_chacha_state(state, key, counter + i, nonce);
         uint8_t *keystream = chacha_block_function(state);
+        for (int i = 0; i < 64; i++) {
+            printf("%02x:", keystream[i]);
+        }
 
         // Getting the next 64 chars
         uint8_t buf[64];
@@ -168,6 +172,7 @@ void chacha20_encrypt(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char
         printf("Block %d\n", i);
         int chars_left = size % 64;
         uint32_t state[4][4];
+        init_chacha_state(state, key, counter + i, nonce);
         uint8_t *keystream = chacha_block_function(state);
 
         uint8_t buf[64];
