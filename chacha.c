@@ -130,6 +130,24 @@ uint8_t *chacha_block_function(uint32_t state[4][4]) {
     return serialize(state);
 }
 
+void pinfo(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char *input_filename, char *output_filename) {
+    printf("Done: encrypted file %s -> %s\n", input_filename, output_filename);
+
+    printf("├── Key: 0x");
+    for (int i = 0; i < 32; i++) {
+        printf("%02x", key[i]);
+    }
+    printf("\n");
+    printf("└── Nonce: 0x");
+    for (int i = 0; i < 12; i++) {
+        printf("%02x", nonce[i]);
+    }
+    printf("\n");
+    // Cool char
+    // └── 
+    // ├
+}
+
 void chacha20_encrypt(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char *input_filename, char *output_filename) {
     struct stat stats;
     int status = stat(input_filename, &stats);
@@ -138,7 +156,6 @@ void chacha20_encrypt(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char
         return;
     }
     off_t size = stats.st_size;
-    printf("Encrypting...\n");
     printf("This file is %d bytes (%d blocks)\n", size, size / 64 + ((size % 64) != 0));
 
     FILE *fp_read = fopen(input_filename, "r");
@@ -180,7 +197,7 @@ void chacha20_encrypt(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char
         free(keystream);
     }
     printf("\n");
-    printf("Finished\n");
     fclose(fp_read);
     fclose(fp_write);
+    pinfo(key, counter, nonce, input_filename, output_filename);
 }
