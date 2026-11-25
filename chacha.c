@@ -139,12 +139,12 @@ void chacha20_encrypt(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char
     }
     off_t size = stats.st_size;
     printf("Encrypting...\n");
-    printf("This file is %d bytes\n", size);
+    printf("This file is %d bytes (%d blocks)\n", size, size / 64 + ((size % 64) != 0));
 
     FILE *fp_read = fopen(input_filename, "r");
     FILE *fp_write = fopen(output_filename, "w");
     for (int i = 0; i < (size / 64); i++) {
-        printf("Block %d\n", i);
+        printf("\rWriting block %d", i);
         // Init and process the state
         uint32_t state[4][4];
         init_chacha_state(state, key, counter + i, nonce);
@@ -160,12 +160,11 @@ void chacha20_encrypt(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char
             fputc(buf[j], fp_write);
         }
         free(keystream);
-        printf("└── finished\n");
     }
     if (size % 64 != 0) {
         // Init and process the state
         int i = size / 64;
-        printf("Block %d\n", i);
+        printf("\rWriting block %d", i);
         int chars_left = size % 64;
         uint32_t state[4][4];
         init_chacha_state(state, key, counter + i, nonce);
@@ -179,8 +178,9 @@ void chacha20_encrypt(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char
             fputc(buf[j], fp_write);
         }
         free(keystream);
-        printf("└── finished\n");
     }
+    printf("\n");
+    printf("Finished\n");
     fclose(fp_read);
     fclose(fp_write);
 }
