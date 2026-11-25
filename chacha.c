@@ -1,4 +1,3 @@
-
 #include "chacha.h"
 
 void rotate_bits_left(uint32_t *num, int amount) {
@@ -150,9 +149,6 @@ void chacha20_encrypt(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char
         uint32_t state[4][4];
         init_chacha_state(state, key, counter + i, nonce);
         uint8_t *keystream = chacha_block_function(state);
-        for (int i = 0; i < 64; i++) {
-            printf("%02x:", keystream[i]);
-        }
 
         // Getting the next 64 chars
         uint8_t buf[64];
