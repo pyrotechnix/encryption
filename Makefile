@@ -1,2 +1,2 @@
 main: main.c
-	gcc main.c chacha.c chacha.h
+	gcc main.c chacha.c
