@@ -133,12 +133,12 @@ uint8_t *chacha_block_function(uint32_t state[4][4]) {
 void pinfo(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char *input_filename, char *output_filename) {
     printf("Done: encrypted file %s -> %s\n", input_filename, output_filename);
 
-    printf("├── Key: 0x");
+    printf("├── Key: ");
     for (int i = 0; i < 32; i++) {
         printf("%02x", key[i]);
     }
     printf("\n");
-    printf("└── Nonce: 0x");
+    printf("└── Nonce: ");
     for (int i = 0; i < 12; i++) {
         printf("%02x", nonce[i]);
     }

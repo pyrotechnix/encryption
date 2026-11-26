@@ -143,6 +143,7 @@ void parse_commands(int argc, char *argv[]) {
     if (should_get_password) {
         printf("Please enter the password: ");
 
+        // Disable echo for password
         struct termios term;
         tcgetattr(fileno(stdin), &term);
         term.c_lflag &= ~ECHO;
@@ -151,10 +152,17 @@ void parse_commands(int argc, char *argv[]) {
         char buf[1024];
         fgets(buf, 1024, stdin);
 
+        // Enable echo again
         term.c_lflag |= ECHO;
         tcsetattr(fileno(stdin), 0, &term);
 
-        printf("%s\n", sha256(buf));
+        printf("\n");
+
+        // Strip newline from password
+        if (buf[strlen(buf) - 1] == '\n') {
+            buf[strlen(buf) - 1] = '\0';
+        }
+
         parse_hex_string(sha256(buf), key, 32);
     }
     chacha20_encrypt(key, 1, nonce, input, output);
