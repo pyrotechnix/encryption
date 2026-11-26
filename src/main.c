@@ -123,10 +123,8 @@ void parse_commands(int argc, char *argv[]) {
             i++;
         } else if (strcmp(argv[i], WRITE_KEYFILE_FLAG) == 0) {
             should_write_keyfile = true;
-            i++;
         } else if (strcmp(argv[i], PASSWORD_FLAG) == 0) {
             should_get_password = true;
-            i++;
         } else {
             input = argv[i];
         }
