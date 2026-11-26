@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <termios.h>
 
 // Implementation of chacha20 encryption
 #include "sha256.h"
@@ -141,8 +142,18 @@ void parse_commands(int argc, char *argv[]) {
     }
     if (should_get_password) {
         printf("Please enter the password: ");
+
+        struct termios term;
+        tcgetattr(fileno(stdin), &term);
+        term.c_lflag &= ~ECHO;
+        tcsetattr(fileno(stdin), 0, &term);
+
         char buf[1024];
         fgets(buf, 1024, stdin);
+
+        term.c_lflag |= ECHO;
+        tcsetattr(fileno(stdin), 0, &term);
+
         printf("%s\n", sha256(buf));
         parse_hex_string(sha256(buf), key, 32);
     }
