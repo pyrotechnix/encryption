@@ -161,42 +161,40 @@ void chacha20_encrypt(uint8_t key[32], uint32_t counter, uint8_t nonce[12], char
     FILE *fp_read = fopen(input_filename, "r");
     FILE *fp_write = fopen(output_filename, "w");
     for (int i = 0; i < (size / 64); i++) {
-        printf("\rWriting block %d", i);
+        // printf("\rWriting block %d", i);
         // Init and process the state
         uint32_t state[4][4];
         init_chacha_state(state, key, counter + i, nonce);
         uint8_t *keystream = chacha_block_function(state);
-
         // Getting the next 64 chars
         uint8_t buf[64];
         fread(buf, 1, 64, fp_read);
-        
         // Xoring them
         for (int j = 0; j < 64; j++) {
             buf[j] ^= keystream[j];
-            fputc(buf[j], fp_write);
         }
+        fwrite(buf, 1, 64, fp_write);
         free(keystream);
     }
     if (size % 64 != 0) {
         // Init and process the state
         int i = size / 64;
-        printf("\rWriting block %d", i);
+        // printf("\rWriting block %d", i);
         int chars_left = size % 64;
         uint32_t state[4][4];
         init_chacha_state(state, key, counter + i, nonce);
-        uint8_t *keystream = chacha_block_function(state);
 
+        uint8_t *keystream = chacha_block_function(state);
         uint8_t buf[64];
         fread(buf, 1, chars_left, fp_read);
 
         for (int j = 0; j < chars_left; j++) {
             buf[j] ^= keystream[j];
-            fputc(buf[j], fp_write);
         }
+        fwrite(buf, 1, chars_left, fp_write);
         free(keystream);
     }
-    printf("\n");
+    //printf("\n");
     fclose(fp_read);
     fclose(fp_write);
     pinfo(key, counter, nonce, input_filename, output_filename);

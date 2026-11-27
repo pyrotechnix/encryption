@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <termios.h>
+#include <time.h>
 
 // Implementation of chacha20 encryption
 #include "sha256.h"
@@ -165,7 +166,13 @@ void parse_commands(int argc, char *argv[]) {
 
         parse_hex_string(sha256(buf), key, 32);
     }
+    struct timespec start;
+    struct timespec end;
+    clock_gettime(CLOCK_MONOTONIC, &start);
     chacha20_encrypt(key, 1, nonce, input, output);
+    clock_gettime(CLOCK_MONOTONIC, &end);
+    float elapsed = end.tv_sec - start.tv_sec + (end.tv_nsec - start.tv_nsec) / 1e9;
+    printf("Elapsed: %.6f\n",  elapsed);
     if (should_write_keyfile) {
         printf("Writing keyfile to %s\n", "keyfile");
         write_keyfile("keyfile", key, nonce);
